@@ -5,10 +5,10 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.Parent;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public final class PalaraWorld extends Parent {
+public final class PalaraWorld extends Pane {
 
     private static final int BIRTH_INTERVAL_MS = 300;
 
@@ -53,8 +53,8 @@ public final class PalaraWorld extends Parent {
         getChildren().remove(sprite);
     }
 
-    public void update(double width, double height) {
-        this.model.getSprites().stream().forEach(s -> s.update(width, height));
+    public void update() {
+        this.model.getSprites().stream().forEach(s -> s.update(getWidth(), getHeight()));
     }
 
 }
