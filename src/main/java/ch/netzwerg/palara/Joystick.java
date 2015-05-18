@@ -1,5 +1,6 @@
 package ch.netzwerg.palara;
 
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -11,7 +12,7 @@ public class Joystick extends Pane {
     private static final Label RIGHT_ARROW = new JoystickLabel("\u2192");
     private static final Label DOWN_ARROW = new JoystickLabel("\u2193");
 
-    public Joystick() {
+    public Joystick(PalaraModel model) {
         GridPane gridPane = new GridPane();
 
         gridPane.add(UP_ARROW, 1, 0);
@@ -19,7 +20,16 @@ public class Joystick extends Pane {
         gridPane.add(RIGHT_ARROW, 2, 1);
         gridPane.add(DOWN_ARROW, 1, 2);
 
+        UP_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairYProperty(), -5));
+        LEFT_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairXProperty(), -5));
+        DOWN_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairYProperty(), 5));
+        RIGHT_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairXProperty(), 5));
+
         getChildren().add(gridPane);
+    }
+
+    private void incProperty(DoubleProperty property, double delta) {
+        property.setValue(property.get() + delta);
     }
 
     private static final class JoystickLabel extends Label {
