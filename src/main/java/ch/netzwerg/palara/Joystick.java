@@ -1,18 +1,17 @@
 package ch.netzwerg.palara;
 
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 
-public class Joystick extends Pane {
+public final class Joystick extends Pane {
 
     private static final Label LEFT_ARROW = new JoystickLabel("\u2190");
     private static final Label UP_ARROW = new JoystickLabel("\u2191");
     private static final Label RIGHT_ARROW = new JoystickLabel("\u2192");
     private static final Label DOWN_ARROW = new JoystickLabel("\u2193");
 
-    public Joystick(PalaraModel model) {
+    public Joystick(CrosshairController controller) {
         GridPane gridPane = new GridPane();
 
         gridPane.add(UP_ARROW, 1, 0);
@@ -20,17 +19,14 @@ public class Joystick extends Pane {
         gridPane.add(RIGHT_ARROW, 2, 1);
         gridPane.add(DOWN_ARROW, 1, 2);
 
-        UP_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairYProperty(), -5));
-        LEFT_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairXProperty(), -5));
-        DOWN_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairYProperty(), 5));
-        RIGHT_ARROW.setOnMouseClicked(e -> incProperty(model.crosshairXProperty(), 5));
+        UP_ARROW.setOnMouseClicked(e -> controller.moveCrosshairUp());
+        LEFT_ARROW.setOnMouseClicked(e -> controller.moveCrosshairLeft());
+        DOWN_ARROW.setOnMouseClicked(e -> controller.moveCrosshairDown());
+        RIGHT_ARROW.setOnMouseClicked(e -> controller.moveCrosshairRight());
 
         getChildren().add(gridPane);
     }
 
-    private void incProperty(DoubleProperty property, double delta) {
-        property.setValue(property.get() + delta);
-    }
 
     private static final class JoystickLabel extends Label {
         public JoystickLabel(String text) {

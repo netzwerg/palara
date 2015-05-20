@@ -22,7 +22,7 @@ public final class Palara extends Application {
         PalaraController controller = new PalaraController(scene, model);
 
         PalaraGamePane gamePane = new PalaraGamePane(model);
-        ControlPane controlPane = new ControlPane(model);
+        ControlPane controlPane = new ControlPane(controller);
         root.getChildren().addAll(gamePane, controlPane);
 
         stage.setTitle("Palara");

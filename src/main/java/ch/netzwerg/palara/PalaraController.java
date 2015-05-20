@@ -5,13 +5,14 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
 
-public final class PalaraController {
+public final class PalaraController implements CrosshairController {
 
     private static final int BIRTH_INTERVAL_MS = 300;
 
@@ -23,12 +24,39 @@ public final class PalaraController {
         this.model = model;
 
         scene.setOnKeyPressed(e -> {
-            if (KeyCode.SPACE == e.getCode()) {
-                this.model.getSprites().forEach(sprite -> {
-                    if (sprite.getBoundsInParent().intersects(model.crosshairBoundsInParentProperty().get())) {
-                        Platform.runLater(() -> this.model.getSprites().remove(sprite));
-                    }
-                });
+            KeyCode keyCode = e.getCode();
+            switch (keyCode) {
+                case SPACE:
+                    shoot(model);
+                    break;
+                case UP:
+                case W: // minecraft
+                case K: // vi
+                    moveCrosshairUp();
+                    break;
+                case RIGHT:
+                case D: // minecraft
+                case L: // vi
+                    moveCrosshairRight();
+                    break;
+                case DOWN:
+                case S: // minecraft
+                case J: // vi
+                    moveCrosshairDown();
+                    break;
+                case LEFT:
+                case A: // minecraft
+                case H: // vi
+                    moveCrosshairLeft();
+                    break;
+            }
+        });
+    }
+
+    private void shoot(PalaraModel model) {
+        this.model.getSprites().forEach(sprite -> {
+            if (sprite.getBoundsInParent().intersects(model.crosshairBoundsInParentProperty().get())) {
+                Platform.runLater(() -> this.model.getSprites().remove(sprite));
             }
         });
     }
@@ -72,6 +100,30 @@ public final class PalaraController {
         boolean isOffBottomEdge = location.getY() - (spriteHeight / 2) > height;
         // no need to check left edge (always moving rightwards)
         return isOffTopEdge || isOffRightEdge || isOffBottomEdge;
+    }
+
+    @Override
+    public void moveCrosshairUp() {
+        incProperty(model.crosshairYProperty(), -5);
+    }
+
+    @Override
+    public void moveCrosshairRight() {
+        incProperty(model.crosshairXProperty(), 5);
+    }
+
+    @Override
+    public void moveCrosshairDown() {
+        incProperty(model.crosshairYProperty(), 5);
+    }
+
+    @Override
+    public void moveCrosshairLeft() {
+        incProperty(model.crosshairXProperty(), -5);
+    }
+
+    private void incProperty(DoubleProperty property, double delta) {
+        property.setValue(property.get() + delta);
     }
 
 }
