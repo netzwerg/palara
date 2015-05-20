@@ -26,6 +26,8 @@ public final class Crosshair extends Canvas {
 
         translateXProperty().bind(model.crosshairXProperty());
         translateYProperty().bind(model.crosshairYProperty());
+
+        model.crosshairBoundsInParentProperty().bind(boundsInParentProperty());
     }
 
     private void drawCenteredCircle(GraphicsContext gc, int width) {

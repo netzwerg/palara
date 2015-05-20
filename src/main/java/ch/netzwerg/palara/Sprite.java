@@ -37,7 +37,8 @@ public final class Sprite extends Group {
 
     public Sprite(PalaraModel model) {
         this.model = model;
-        getChildren().add(new Circle(R.nextInt(100), COLORS.get(R.nextInt(COLORS.size()))));
+        Circle circle = new Circle(R.nextInt(100), COLORS.get(R.nextInt(COLORS.size())));
+        getChildren().add(circle);
     }
 
     public void update(double width, double height) {
