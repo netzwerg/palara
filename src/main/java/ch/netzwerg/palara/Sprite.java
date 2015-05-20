@@ -1,7 +1,5 @@
 package ch.netzwerg.palara;
 
-import javafx.application.Platform;
-import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -31,16 +29,15 @@ public final class Sprite extends Group {
     private static final int SPEED_X = 3;
     private static final int SPEED_Y = 5;
 
-    private final PalaraModel model;
     private boolean initialized = false;
     private int yDirection = 1;
 
-    public Sprite(PalaraModel model) {
-        this.model = model;
+    public Sprite() {
         Circle circle = new Circle(R.nextInt(100), COLORS.get(R.nextInt(COLORS.size())));
         getChildren().add(circle);
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void update(double width, double height) {
         if (!initialized) {
             initialized = true;
@@ -50,7 +47,6 @@ public final class Sprite extends Group {
             yDirection = getPossiblySwitchedYDirection(yDirection);
             double dy = calcDeltaY(yDirection);
             getTransforms().add(new Translate(SPEED_X, dy));
-            removeIfOutOfSceneBounds(width, height);
         }
     }
 
@@ -60,15 +56,6 @@ public final class Sprite extends Group {
 
     private static double calcDeltaY(int yDirection) {
         return (double) (int) (yDirection * Math.sin(R.nextDouble()) * SPEED_Y);
-    }
-
-    private void removeIfOutOfSceneBounds(double width, double height) {
-        Point2D location = localToParent(0, 0);
-        double spriteWidth = getBoundsInParent().getWidth();
-        double spriteHeight = getBoundsInParent().getHeight();
-        if (location.getX() - (spriteWidth / 2) > width || location.getY() - (spriteHeight / 2) > height) {
-            Platform.runLater(() -> model.getSprites().remove(this));
-        }
     }
 
 }

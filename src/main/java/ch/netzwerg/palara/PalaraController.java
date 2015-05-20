@@ -6,6 +6,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.util.Duration;
@@ -44,18 +45,33 @@ public final class PalaraController {
     }
 
     private void spawnSprites(ObservableList<Sprite> sprites) {
-        KeyFrame keyFrame = new KeyFrame(Duration.millis(BIRTH_INTERVAL_MS), e -> {
-            Sprite sprite = new Sprite(model);
-            sprite.setOnMouseClicked(e1 -> model.getSprites().remove(sprite));
-            sprites.add(sprite);
-        });
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(BIRTH_INTERVAL_MS), e -> sprites.add(new Sprite()));
         Timeline timeline = new Timeline(keyFrame);
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
     }
 
     private void updateSprites() {
-        this.model.getSprites().stream().forEach(s -> s.update(scene.getWidth(), scene.getHeight()));
+        ObservableList<Sprite> sprites = this.model.getSprites();
+        sprites.stream().forEach(sprite -> {
+            double width = scene.getWidth();
+            double height = scene.getHeight();
+            sprite.update(width, height);
+            if (isOffScreen(sprite, width, height)) {
+                Platform.runLater(() -> sprites.remove(sprite));
+            }
+        });
+    }
+
+    private static boolean isOffScreen(Sprite sprite, double width, double height) {
+        Point2D location = sprite.localToParent(0, 0);
+        double spriteWidth = sprite.getBoundsInParent().getWidth();
+        double spriteHeight = sprite.getBoundsInParent().getHeight();
+        boolean isOffTopEdge = location.getX() < 0;
+        boolean isOffRightEdge = location.getX() - (spriteWidth / 2) > width;
+        boolean isOffBottomEdge = location.getY() - (spriteHeight / 2) > height;
+        // no need to check left edge (always moving rightwards)
+        return isOffTopEdge || isOffRightEdge || isOffBottomEdge;
     }
 
 }
